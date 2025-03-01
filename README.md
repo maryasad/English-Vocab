@@ -236,11 +236,11 @@ CREATE OR REPLACE TABLE VOCAB_DB.PUBLIC.WORDS (
 
 ---
 
-## 🔥 Features
-✅ Vocabulary Database (Words, Meanings, Examples)
-✅ User Progress Tracking (Snowflake)
-✅ Flutter UI for Interactive Learning
-✅ Flask API for Data Retrieval
+## 🔥 Features  
+✅ Vocabulary Database (Words, Meanings, Examples)  
+✅ User Progress Tracking (Snowflake)  
+✅ Flutter UI for Interactive Learning  
+✅ Flask API for Data Retrieval  
 ✅ Cross-Platform (Windows, Web, Mobile)
 
 ---
