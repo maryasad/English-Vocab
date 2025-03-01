@@ -197,7 +197,8 @@ class ApiService {
 ```bash
 cd backend
 source venv/bin/activate  # Activate virtual environment
-python backend.py
+python -m backend
+
 ```
 
 ### Frontend (Flutter UI)
