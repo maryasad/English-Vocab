@@ -53,29 +53,95 @@ pip install flask flask-cors snowflake-connector-python
 
 **Create `backend.py` (Main API File)**
 ```python
-from flask import Flask
-from app.routes import api_blueprint
+from app import create_app
 
-app = Flask(__name__)
-app.register_blueprint(api_blueprint)  # Register API routes
+app = create_app()
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+```
+**Create app/__init__.py (Initialize Flask App)**
+```python
+from flask import Flask
+from app.routes import api
+from app.db import init_db
+
+def create_app():
+    app = Flask(__name__)
+
+    # Initialize database connection
+    init_db()
+
+    # Register API routes
+    app.register_blueprint(api)
+
+    return app
+```
+**app/config.py (Store Configurations)**
+```python
+import os
+
+# Snowflake Database Configuration
+SNOWFLAKE_CONFIG = {
+    "user": "your_username",
+    "password": "your_password",
+    "account": "your_snowflake_account",
+    "warehouse": "your_warehouse",
+    "database": "VOCAB_DB",
+    "schema": "PUBLIC",
+}
 ```
 
-**Database Connection (`db.py`)**
+**app/db.py (Connect to Snowflake)**
 ```python
 import snowflake.connector
+from app.config import SNOWFLAKE_CONFIG
 
-def get_db_connection():
-    conn = snowflake.connector.connect(
-        user='YOUR_USER',
-        password='YOUR_PASSWORD',
-        account='YOUR_ACCOUNT',
-        database='VOCAB_DB',
-        schema='PUBLIC'
-    )
-    return conn
+def init_db():
+    try:
+        conn = snowflake.connector.connect(**SNOWFLAKE_CONFIG)
+        print("✅ Connected to Snowflake!")
+        return conn
+    except Exception as e:
+        print(f"❌ Database connection failed: {e}")
+        return None
+
+def get_words():
+    """Fetch words from the Snowflake database."""
+    conn = init_db()
+    if conn:
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM WORDS")
+        words = cur.fetchall()
+        cur.close()
+        conn.close()
+        return words
+    return []
+```
+**app/models.py (Database Models)**
+```python
+class Word:
+    def __init__(self, id, word, meaning, example_sentence, difficulty_level, audio_url, image_url):
+        self.id = id
+        self.word = word
+        self.meaning = meaning
+        self.example_sentence = example_sentence
+        self.difficulty_level = difficulty_level
+        self.audio_url = audio_url
+        self.image_url = image_url
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "word": self.word,
+            "meaning": self.meaning,
+            "example_sentence": self.example_sentence,
+            "difficulty_level": self.difficulty_level,
+            "audio_url": self.audio_url,
+            "image_url": self.image_url,
+        }
+
 ```
 
 ### 2️⃣ Frontend (Flutter) Setup
