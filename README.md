@@ -143,6 +143,20 @@ class Word:
         }
 
 ```
+**app/routes.py  (API Endpoints)**
+```python
+from flask import Blueprint, jsonify
+from app.db import get_words
+from app.models import Word
+
+api = Blueprint('api', __name__)
+
+@api.route('/words', methods=['GET'])
+def get_all_words():
+    words_data = get_words()
+    words = [Word(*word).to_dict() for word in words_data]
+    return jsonify(words)
+```
 
 ### 2️⃣ Frontend (Flutter) Setup
 
