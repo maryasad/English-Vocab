@@ -25,16 +25,27 @@ Before starting, ensure you have the following installed:
 
 ### 1️⃣ Set Up Snowflake Database
 1. Sign in to your **Snowflake** account.
-2. Create a **database** and a **table** for storing vocabulary words:
+2. Create a **database** and 2 **tables** for storing vocabulary words and user progress:
    ```sql
-   CREATE DATABASE vocab_db;
-   USE vocab_db;
-   CREATE TABLE words (
-       id INT AUTOINCREMENT PRIMARY KEY,
-       word STRING,
-       definition STRING,
-       example STRING
-   );
+      create or replace TABLE VOCAB_DB.PUBLIC.USER_PROGRESS (
+      	USER_ID VARCHAR(16777216),
+      	WORD_ID NUMBER(38,0),
+      	LEARNED BOOLEAN DEFAULT FALSE,
+      	QUIZ_SCORE NUMBER(38,0) DEFAULT 0,
+      	LAST_REVIEWED TIMESTAMP_NTZ(9) DEFAULT CURRENT_TIMESTAMP(),
+      	foreign key (WORD_ID) references VOCAB_DB.PUBLIC.WORDS(ID)
+      );
+      create or replace TABLE VOCAB_DB.PUBLIC.WORDS (
+      	ID NUMBER(38,0) NOT NULL autoincrement start 1 increment 1 noorder,
+      	WORD VARCHAR(50),
+      	MEANING VARCHAR(16777216),
+      	EXAMPLE_SENTENCE VARCHAR(16777216),
+      	DIFFICULTY_LEVEL VARCHAR(20),
+      	AUDIO_URL VARCHAR(16777216),
+      	IMAGE_URL VARCHAR(16777216),
+      	CREATED_AT TIMESTAMP_NTZ(9) DEFAULT CURRENT_TIMESTAMP(),
+      	primary key (ID)
+      );
    ```
 3. Get your **Snowflake connection credentials** (account, username, password, warehouse, etc.).
 
